@@ -32,7 +32,7 @@ function mkDisp(){const first={};S.T.forEach(t=>first[t.first]=(first[t.first]||
 function chip(id){const t=S.T[id];const dead=cur&&cur.dead.has(id);return '<button type="button" class="nm'+(dead?' dead':'')+'" data-id="'+id+'" title="'+esc(t.name)+', District '+t.district+'"><b>'+t.district+'</b>'+esc(disp[id])+'</button>';}
 function fmt(s){return esc(s).replace(/\[\[(\d+)\]\]/g,(m,i)=>chip(+i));}
 function plain(s){return s.replace(/\[\[(\d+)\]\]/g,(m,i)=>S.T[+i].name);}
-function begin(c,k){cfg=c;const roster=HG.parseRoster(c.txt);S=new HG.Sim(roster,Object.assign({seed:c.seed,arena:c.arena,twists:c.twists},c.flags));mkDisp();cur={dead:new Set()};shown=0;$('#feed').innerHTML='';$('#setup').hidden=true;$('#arena').hidden=false;auto=false;$('#b-auto').setAttribute('aria-pressed','false');$('#b-auto').textContent='Auto-play';
+function begin(c,k){cfg=c;const roster=HG.parseRoster(c.txt);S=new HG.Sim(roster,Object.assign({seed:c.seed,arena:c.arena,twists:c.twists},c.flags));mkDisp();cur={dead:new Set()};shown=0;$('#feed').innerHTML='';screen('arena');auto=false;$('#b-auto').setAttribute('aria-pressed','false');$('#b-auto').textContent='Auto-play';
  document.querySelector('.top .sub').textContent=c.twists.length?c.edition:'A Hunger Games simulator';
  renderSide(S.T.map(t=>({id:t.id,alive:true,hp:100,zone:'horn',kills:0,inj:[],items:[],ally:null,fed:85,hyd:85,sanity:80})),new Set());$('#ph-t').textContent='The Reaping';$('#ph-s').textContent=S.T.length+' tributes';
  if(c.twists.length){const q=document.createElement('div');q.className='quell';q.innerHTML='<div class="lbl">By order of the Capitol</div><h3>'+esc(c.edition)+'</h3>'+c.twists.map(id=>{const t=HG.TWISTS.find(x=>x.id===id);return '<p><b>'+esc(t.name)+'</b>'+esc(t.read)+'</p>';}).join('');$('#feed').appendChild(q);}
@@ -85,10 +85,11 @@ function drawer(id){const t=S.T[id];const s=(S.phases.length?S.phases[S.phases.l
 function summaryText(){let o='ARENA LEDGER, THE GAMES IN BRIEF (seed '+cfg.seed+')\n\nTRAINING SCORES\n'+S.training.slice(0,6).map(r=>r.rank+'. '+S.T[r.id].name+' - '+r.score).join('\n')+'\n\n';S.phases.slice(0,shown).forEach(p=>{const d=HG.digest(S,p);o+=p.title.toUpperCase()+': '+d.hl+'\n'+plain(d.text)+'\n\n';});if(S.over)o+='THE GAMES IN BRIEF\n'+HG.finalDigest(S).map(x=>x[0]+': '+plain(x[1])).join('\n')+'\n';return o;}
 function recapText(){let o='ARENA LEDGER (seed '+cfg.seed+')\n\nTRAINING SCORES\n'+S.training.map(r=>r.rank+'. '+S.T[r.id].name+' - '+r.score+' ('+r.odds+' to 1)').join('\n')+'\n\n';S.phases.slice(0,shown).forEach(p=>{o+=p.title.toUpperCase()+'\n';p.events.forEach(e=>o+='- '+plain(e.text)+'\n');if(p.cannons.length)o+='CANNONS: '+p.cannons.map(id=>S.T[id].name).join(', ')+'\n';o+='\n';});if(S.over&&S.victor)o+='VICTOR: '+S.victor.name+' (District '+S.victor.district+')\n';return o;}
 function go(seed){begin({txt:$('#roster-in').value,seed,flags:FLAGS(),arena:arenaOut(),twists:twistsOn(),edition:$('#q-ed').value.trim()||'The Quarter Quell'},0);}
-function toSetup(){clearTimeout(timer);busy=false;auto=false;$('#arena').hidden=true;$('#setup').hidden=false;document.querySelector('.top .sub').textContent='A Hunger Games simulator';window.scrollTo(0,0);}
+function toSetup(){clearTimeout(timer);busy=false;auto=false;screen(backTo);document.querySelector('.top .sub').textContent='A Hunger Games simulator';window.scrollTo(0,0);}
 function tab(p){['trib','arena','rules'].forEach(x=>{$('#pane-'+x).hidden=x!==p;$('#t-'+x).setAttribute('aria-selected',x===p?'true':'false');});if(p==='arena')prevMap();}
 function copyText(t,btn,label){let ok=false;try{navigator.clipboard.writeText(t).then(()=>{if(btn){btn.textContent='Copied';setTimeout(()=>btn.textContent=label,1400);}},()=>fb(t));ok=true;}catch(e){}if(!ok)fb(t);}
 function fb(t){$('#dr').innerHTML='<button class="btn" id="dx" type="button" style="float:right">Close</button><h3>Copy this</h3><p class="note">Select all and copy.</p><textarea style="min-height:60vh" readonly>'+esc(t)+'</textarea>';$('#drawer').hidden=false;$('#dx').onclick=()=>$('#drawer').hidden=true;}
+let backTo='home';const SCREENS=['home','gallery','ready','setup','arena'];function screen(n){SCREENS.forEach(s=>{const e=document.getElementById(s);if(e)e.hidden=s!==n;});window.scrollTo(0,0);}
 function start(data){const cf=data&&data.cfg;$('#roster-in').value=(cf&&cf.txt)||loadRoster()||HG.DEFAULT_ROSTER;rollSeed();
  $('#a-pre').innerHTML=Object.keys(HG.ARENAS).map(k=>'<option value="'+k+'">'+esc(HG.ARENAS[k].name)+'</option>').join('')+'<option value="custom">Custom</option>';
  $('#q-list').innerHTML=HG.TWISTS.map(t=>'<label class="twist" for="q-'+t.id+'"><input type="checkbox" id="q-'+t.id+'"><b>'+esc(t.name)+'</b><span>'+esc(t.desc)+'</span></label>').join('');
@@ -119,10 +120,20 @@ function start(data){const cf=data&&data.cfg;$('#roster-in').value=(cf&&cf.txt)|
  $('#b-copys').onclick=()=>copyText(summaryText(),$('#b-copys'),'Copy summary');$('#b-copy').onclick=()=>copyText(recapText(),$('#b-copy'),'Copy recap');
  document.addEventListener('click',e=>{const n=e.target.closest('.nm,.tc');if(n&&S&&n.dataset.id!==undefined)drawer(+n.dataset.id);else if(e.target===$('#drawer'))$('#drawer').hidden=true;});
  document.addEventListener('keydown',e=>{if(e.key==='Escape')$('#drawer').hidden=true;});
- /* ---- presets, share links, community library ---- */
+ /* ---- presets, share links, community library, themes, display prefs ---- */
  const SBU='https://vxahxkphkavemduanhxs.supabase.co/rest/v1/rpc/',SBK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4YWh4a3Boa2F2ZW1kdWFuaHhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUzMTAyNTYsImV4cCI6MjExMDg4NjI1Nn0.e5-Y0XNgvGXScJMgDXEKQVM52MnY4y61uSa1_wV3Pk4';
  async function rpc(fn,args){const r=await fetch(SBU+fn,{method:'POST',headers:{apikey:SBK,Authorization:'Bearer '+SBK,'Content-Type':'application/json'},body:JSON.stringify(args||{})});const t=await r.text();let j=null;try{j=t?JSON.parse(t):null;}catch(e){}if(!r.ok)throw new Error((j&&j.message)||'Request failed ('+r.status+')');return j;}
- const msg=(t,bad)=>{const m=$('#p-msg');m.textContent=t||'';m.className='note'+(bad?' bad':'');};
+ const msg=(id,t,bad)=>{const m=$('#'+id);if(!m)return;m.textContent=t||'';m.classList.toggle('bad',!!bad);};
+ const store={get(k){try{return localStorage.getItem(k);}catch(e){return null;}},set(k,v){try{localStorage.setItem(k,v);}catch(e){}}};
+ /* display prefs */
+ const ZS=[1,1.22,1.45];let zi=+store.get('al-zoom')||0;if(!(zi>=0&&zi<=2))zi=0;let plain=store.get('al-plain')==='1';let curTheme=null;
+ function applyZoom(){document.querySelector('.wrap').style.zoom=ZS[zi]===1?'':ZS[zi];$('#f-plus').disabled=zi>=2;$('#f-minus').disabled=zi<=0;store.set('al-zoom',zi);}
+ function paintTheme(){const r=document.documentElement.style;const t=plain?null:curTheme;const set=(k,v)=>v?r.setProperty(k,v):r.removeProperty(k);set('--ink',t&&t.bg);set('--panel',t&&t.panel);set('--panel2',t&&t.panel2);set('--line',t&&t.line);set('--brass',t&&t.accent);set('--amber',t&&t.accent2);
+  const b=$('#f-col');b.textContent=plain?'Colors: plain':'Colors: themed';b.setAttribute('aria-pressed',plain?'true':'false');}
+ function applyTheme(t){curTheme=t||null;paintTheme();}
+ $('#f-plus').onclick=()=>{if(zi<2){zi++;applyZoom();}};$('#f-minus').onclick=()=>{if(zi>0){zi--;applyZoom();}};
+ $('#f-col').onclick=()=>{plain=!plain;store.set('al-plain',plain?'1':'0');paintTheme();};applyZoom();paintTheme();
+ /* config snapshot/apply */
  function snap(){return{csv:$('#roster-in').value,arena:arenaOut(),flags:FLAGS(),twists:twistsOn(),edition:$('#q-ed').value.trim()||'The Quarter Quell',seed:+$('#s-seed').value||1};}
  function applyCfg(p,keepSeed){if(!p||typeof p.csv!=='string'||!p.arena||typeof p.arena!=='object')throw new Error('That setup is not valid.');
   const f=p.flags||{};const num=(v,a,b,d)=>{v=+v;return isFinite(v)?Math.max(a,Math.min(b,v)):d;};
@@ -130,22 +141,40 @@ function start(data){const cf=data&&data.cfg;$('#roster-in').value=(cf&&cf.txt)|
   $('#s-car').value=num(f.carnage,.6,1.6,1);$('#s-spons').value=num(f.sponsors,0,2,1);$('#s-haz').value=num(f.hazards,0,2,1);$('#s-close').checked=f.closing!==false;$('#s-ally').checked=f.alliances!==false;$('#s-dist').checked=!!f.districtWin;
   $('#q-ed').value=String(p.edition||'The Quarter Quell').slice(0,60);HG.TWISTS.forEach(t=>$('#q-'+t.id).checked=false);const tw=Array.isArray(p.twists)?p.twists:[];tw.forEach(id=>{const e=$('#q-'+id);if(e)e.checked=true;});$('#q-on').checked=tw.length>0;$('#q-box').classList.toggle('dim',!tw.length);
   if(!keepSeed&&p.seed)$('#s-seed').value=num(p.seed,1,999999999,1);upCount();}
- const PR=window.PRESETS||[];$('#p-sel').innerHTML='<option value="">Choose a preset</option>'+PR.map(p=>'<option value="'+esc(p.id)+'">'+esc(p.name)+'</option>').join('');
- let curPre=null;
- function showSeeds(p){const box=$('#p-seeds');if(!p||!p.seeds||!p.seeds.length){box.innerHTML='';return;}box.innerHTML='<span class="lbl">Good seeds</span>'+p.seeds.map(s=>'<button type="button" class="chipbtn" data-s="'+(+s[0])+'">'+(+s[0])+' · '+esc(s[1])+'</button>').join('');}
- function loadPreset(id){const p=PR.find(x=>x.id===id);if(!p)return;curPre=p;applyCfg(Object.assign({},p,{seed:p.seeds&&p.seeds[0]?p.seeds[0][0]:undefined}));showSeeds(p);msg('Loaded “'+p.name+'”. Pick a seed below or press Begin the Games.');}
- $('#p-sel').onchange=()=>{if($('#p-sel').value)loadPreset($('#p-sel').value);else{curPre=null;showSeeds(null);}};
- $('#p-seeds').addEventListener('click',e=>{const b=e.target.closest('.chipbtn');if(!b)return;$('#s-seed').value=b.dataset.s;upCount();$('#b-start').click();});
- $('#p-share').onclick=async()=>{const b=$('#p-share');b.disabled=true;msg('Making a link…');try{const code=await rpc('create_share',{p_payload:snap()});const u=location.origin+location.pathname+'?g='+code;msg('Link copied: '+u);copyText(u,null,'');}catch(e){msg('Could not make a link: '+e.message,1);}b.disabled=false;};
+ /* navigation */
+ document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{const g=b.dataset.go;if(g==='home')applyTheme(null);screen(g);});
+ $('#c-pre').onclick=()=>{applyTheme(null);screen('gallery');};
+ $('#c-cus').onclick=()=>{applyTheme(null);backTo='setup';$('#su-h').textContent='Build a custom game';screen('setup');tab('trib');};
+ /* gallery */
+ const PR=window.PRESETS||[];let curPre=null;
+ const cnt=p=>{const r=HG.parseRoster(p.csv);return r.length+' tributes · '+Math.ceil(r.length/2)+' districts';};
+ (function buildGal(){const cats=[];PR.forEach(p=>{if(cats.indexOf(p.cat)<0)cats.push(p.cat);});
+  $('#gal').innerHTML=cats.map(c=>'<h3 class="gh">'+esc(c)+'</h3><div class="gal">'+PR.filter(p=>p.cat===c).map(p=>'<button type="button" class="pcard" data-id="'+esc(p.id)+'" style="--ca:'+p.theme.accent+';--cp:'+p.theme.panel+';--cb:'+p.theme.accent2+'"><b>'+esc(p.name)+'</b><span>'+esc(p.blurb)+'</span><div class="pm">'+esc(cnt(p))+'</div></button>').join('')+'</div>').join('');})();
+ $('#gal').addEventListener('click',e=>{const b=e.target.closest('.pcard');if(!b)return;const p=PR.find(x=>x.id===b.dataset.id);if(!p)return;curPre=p;applyCfg(Object.assign({},p,{seed:p.seeds&&p.seeds[0]?p.seeds[0][0]:undefined}));applyTheme(p.theme);openReady({name:p.name,blurb:p.blurb,seeds:p.seeds,edition:p.edition,twists:p.twists,meta:cnt(p)},'gallery');});
+ /* ready screen */
+ function openReady(o,backTarget){$('#rd-name').textContent=o.name;$('#rd-blurb').textContent=o.blurb||'';
+  const tn=(o.twists||[]).map(id=>{const t=HG.TWISTS.find(x=>x.id===id);return t?t.name:id;});
+  $('#rd-meta').textContent=[o.meta||cnt({csv:$('#roster-in').value}),o.edition&&tn.length?o.edition+' ('+tn.join(', ')+')':''].filter(Boolean).join(' · ');
+  $('#rd-seeds').innerHTML=(o.seeds||[]).map(s=>'<button type="button" class="seedbtn" data-s="'+(+s[0])+'"><b>'+esc(s[1])+'</b><span>Seed '+(+s[0])+'</span></button>').join('');
+  $('#rd-seeds').previousElementSibling.textContent=(o.seeds&&o.seeds.length)?'Pick a game (each seed is a different, repeatable story)':'Run a game';
+  $('#rd-back').dataset.go=backTarget;$('#rd-back').textContent=backTarget==='gallery'?'← All presets':'← Back';msg('rd-msg','');backTo='ready';screen('ready');}
+ function runSeed(seed){const r=HG.parseRoster($('#roster-in').value);if(r.length<4||r.length>48){msg('rd-msg','This setup needs 4 to 48 tributes. Use Customize to fix it.',1);return;}$('#s-seed').value=seed;upCount();$('#b-start').click();backTo='ready';}
+ $('#rd-seeds').addEventListener('click',e=>{const b=e.target.closest('.seedbtn');if(b)runSeed(+b.dataset.s);});
+ $('#rd-rand').onclick=()=>{rollSeed();runSeed(+$('#s-seed').value);};
+ $('#rd-cus').onclick=()=>{$('#su-h').textContent='Customize';backTo='setup';screen('setup');tab('trib');};
+ async function share(id,btn){btn.disabled=true;msg(id,'Making a link…');try{const code=await rpc('create_share',{p_payload:snap()});const u=location.origin+location.pathname+'?g='+code;msg(id,'Link copied: '+u);copyText(u,null,'');}catch(e){msg(id,'Could not make a link: '+e.message,1);}btn.disabled=false;}
+ $('#rd-share').onclick=()=>share('rd-msg',$('#rd-share'));$('#p-share').onclick=()=>share('p-msg',$('#p-share'));
+ /* community */
  function openDr(h){$('#dr').innerHTML='<button class="btn" id="dx" type="button" style="float:right">Close</button>'+h;$('#drawer').hidden=false;$('#dx').onclick=()=>$('#drawer').hidden=true;}
- $('#p-pub').onclick=()=>{const r=HG.parseRoster($('#roster-in').value);if(r.length<4||r.length>48){msg('Add 4 to 48 tributes first.',1);return;}
+ $('#p-pub').onclick=()=>{const r=HG.parseRoster($('#roster-in').value);if(r.length<4||r.length>48){msg('p-msg','Add 4 to 48 tributes first.',1);return;}
   openDr('<h3>Publish as a community preset</h3><p class="note">This adds your current roster, arena and rules to the public list. Anyone can load it. Use made-up or fictional characters, not private people. There is no editing or deleting after publishing.</p><label class="lbl" for="pu-n">Name</label><input id="pu-n" type="text" maxlength="60" class="fld"><label class="lbl" for="pu-b" style="margin-top:10px;display:block">One-line description</label><input id="pu-b" type="text" maxlength="240" class="fld"><label class="lbl" for="pu-a" style="margin-top:10px;display:block">Your name (optional)</label><input id="pu-a" type="text" maxlength="40" class="fld"><div class="btns" style="margin-top:14px"><button class="btn pri" id="pu-go" type="button">Publish</button><span class="note" id="pu-m"></span></div>');
-  $('#pu-go').onclick=async()=>{const n=$('#pu-n').value.trim();if(n.length<2){$('#pu-m').textContent='Give it a name.';return;}$('#pu-go').disabled=true;$('#pu-m').textContent='Publishing…';try{await rpc('publish_preset',{p_name:n,p_blurb:$('#pu-b').value,p_author:$('#pu-a').value,p_payload:snap()});$('#drawer').hidden=true;msg('Published. It now appears in Community presets.');}catch(e){$('#pu-m').textContent='Could not publish: '+e.message;$('#pu-go').disabled=false;}};};
- $('#p-comm').onclick=async()=>{openDr('<h3>Community presets</h3><p class="note">Loading…</p>');try{const L=await rpc('list_presets');
-  const h=L&&L.length?L.map(x=>'<div class="cp"><div><b>'+esc(x.name)+'</b>'+(x.author?' <span class="note">by '+esc(x.author)+'</span>':'')+'<div class="note" style="margin:2px 0 0">'+esc(x.blurb||'')+'</div></div><div class="btns"><button class="btn pri" type="button" data-l="'+(+x.id)+'">Load</button><button class="btn" type="button" data-r="'+(+x.id)+'" title="Report this preset">Report</button></div></div>').join(''):'<p class="note">Nothing here yet. Publish the first one.</p>';
-  openDr('<h3>Community presets</h3>'+h);$('#dr').onclick=async e=>{const l=e.target.closest('[data-l]'),r=e.target.closest('[data-r]');if(l){try{const p=await rpc('get_preset',{p_id:+l.dataset.l});if(!p)throw new Error('This preset is no longer available.');applyCfg(p);curPre=null;showSeeds(null);$('#p-sel').value='';$('#drawer').hidden=true;msg('Loaded a community preset.');}catch(x){msg('Could not load it: '+x.message,1);$('#drawer').hidden=true;}}
+  $('#pu-go').onclick=async()=>{const n=$('#pu-n').value.trim();if(n.length<2){$('#pu-m').textContent='Give it a name.';return;}$('#pu-go').disabled=true;$('#pu-m').textContent='Publishing…';try{await rpc('publish_preset',{p_name:n,p_blurb:$('#pu-b').value,p_author:$('#pu-a').value,p_payload:snap()});$('#drawer').hidden=true;msg('p-msg','Published. It now appears in Community presets.');}catch(e){$('#pu-m').textContent='Could not publish: '+e.message;$('#pu-go').disabled=false;}};};
+ $('#c-comm').onclick=async()=>{openDr('<h3>Community presets</h3><p class="note">Loading…</p>');try{const L=await rpc('list_presets');
+  const h=L&&L.length?L.map(x=>'<div class="cp"><div><b>'+esc(x.name)+'</b>'+(x.author?' <span class="note">by '+esc(x.author)+'</span>':'')+'<div class="note" style="margin:2px 0 0">'+esc(x.blurb||'')+'</div></div><div class="btns"><button class="btn pri" type="button" data-l="'+(+x.id)+'" data-n="'+esc(x.name)+'" data-b="'+esc(x.blurb||'')+'">Load</button><button class="btn" type="button" data-r="'+(+x.id)+'" title="Report this preset">Report</button></div></div>').join(''):'<p class="note">Nothing here yet. Publish the first one from the custom builder.</p>';
+  openDr('<h3>Community presets</h3>'+h);$('#dr').onclick=async e=>{const l=e.target.closest('[data-l]'),r=e.target.closest('[data-r]');if(l){try{const p=await rpc('get_preset',{p_id:+l.dataset.l});if(!p)throw new Error('This preset is no longer available.');applyCfg(p);applyTheme(null);$('#drawer').hidden=true;openReady({name:l.dataset.n,blurb:l.dataset.b,seeds:[[+$('#s-seed').value,'Run this setup']],edition:p.edition,twists:p.twists},'home');}catch(x){msg('h-msg','Could not load it: '+x.message,1);$('#drawer').hidden=true;}}
    else if(r){try{await rpc('report_preset',{p_id:+r.dataset.r});r.textContent='Reported';r.disabled=true;}catch(x){}}};}catch(e){openDr('<h3>Community presets</h3><p class="note bad">Could not load the list: '+esc(e.message)+'</p>');}};
- (async()=>{const q=new URLSearchParams(location.search);const g=q.get('g');if(g&&/^[a-f0-9]{10}$/.test(g)){msg('Loading shared setup…');try{const p=await rpc('get_share',{p_code:g});if(!p)throw new Error('That link has expired or does not exist.');applyCfg(p);msg('Loaded a shared setup. Press Begin the Games to run it with the same seed.');}catch(e){msg('Could not load that link: '+e.message,1);}}})();
+ /* share links */
+ (async()=>{const q=new URLSearchParams(location.search);const g=q.get('g');if(g&&/^[a-f0-9]{10}$/.test(g)){msg('h-msg','Loading shared setup…');try{const p=await rpc('get_share',{p_code:g});if(!p)throw new Error('That link has expired or does not exist.');applyCfg(p);msg('h-msg','');openReady({name:'Shared setup',blurb:'Someone shared this setup with you.',seeds:[[+$('#s-seed').value,'Run with the shared seed']],edition:p.edition,twists:p.twists},'home');}catch(e){msg('h-msg','Could not load that link: '+e.message,1);}}})();
  if(window.claude&&window.claude.hot&&window.claude.hot.snapshot)window.claude.hot.snapshot(()=>({cfg:cfg,k:shown}));
  if(cf&&data.k>0)begin(cf,data.k);}
 const hot=window.claude&&window.claude.hot;if(hot&&hot.ready)hot.ready(start);else start((hot&&hot.data)||{});
