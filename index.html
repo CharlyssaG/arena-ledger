@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Arena Ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* layout: ledger feed on the left, living map + roster on the right; one committed dark world */
+:root{--ink:#120e0d;--panel:#1b1512;--panel2:#231b17;--line:#3a2e27;--bone:#eadfca;--dim:#a89c88;--brass:#c9a24b;--blood:#b8372d;--moss:#7f9a62;--amber:#d38a3a;--silver:#8fa3ad;
+ --disp:'Big Shoulders Display','Arial Narrow',sans-serif;--body:'Newsreader',Georgia,serif;--mono:'IBM Plex Mono',ui-monospace,monospace;color-scheme:dark}
+*{box-sizing:border-box}html,body{margin:0;background:var(--ink);color:var(--bone);font-family:var(--body);font-size:18px;line-height:1.5}
+body{background:radial-gradient(1200px 500px at 70% -10%,#2a1c12 0,transparent 60%),var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+.wrap{max-width:1240px;margin:0 auto;padding:20px 20px 80px}
+.top{display:flex;align-items:baseline;gap:16px;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:22px}
+.top h1{font:900 clamp(34px,6vw,58px)/.9 var(--disp);letter-spacing:.04em;text-transform:uppercase;margin:0}
+.top h1 span{color:var(--brass)}.top .sub{font:500 12px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+h2{font:800 24px/1 var(--disp);letter-spacing:.08em;text-transform:uppercase;margin:0 0 10px;color:var(--brass)}
+.lbl{font:500 11px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.setup{display:grid;grid-template-columns:1.3fr 1fr;gap:28px}
+textarea{width:100%;min-height:430px;background:var(--panel);border:1px solid var(--line);color:var(--bone);font:400 14px/1.6 var(--mono);padding:14px;resize:vertical}
+.field{display:grid;gap:6px;margin-bottom:16px}
+.field input[type=range]{width:100%;accent-color:var(--brass)}.field .row{display:flex;justify-content:space-between;align-items:baseline}
+input[type=number],select{background:var(--panel);border:1px solid var(--line);color:var(--bone);font:400 14px var(--mono);padding:8px 10px;width:100%}
+.chk{display:flex;gap:10px;align-items:center;margin-bottom:10px;font-size:16px}.chk input{accent-color:var(--brass);width:18px;height:18px}
+.btn{background:transparent;border:1px solid var(--line);padding:9px 16px;font:600 14px var(--disp);letter-spacing:.12em;text-transform:uppercase;transition:.15s}
+.btn:hover{border-color:var(--brass);color:var(--brass)}.btn.pri{background:var(--brass);color:#1a1209;border-color:var(--brass);font-size:17px;padding:11px 24px}.btn.pri:hover{background:#dcb85c;color:#1a1209}
+.btn:disabled{opacity:.4;cursor:default}.btns{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.note{color:var(--dim);font-size:15px;font-style:italic}.err{color:var(--blood);font:500 13px var(--mono)}
+.bar{position:sticky;top:0;z-index:5;background:linear-gradient(var(--ink) 80%,transparent);padding:10px 0 14px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
+.bar .ph{font:900 32px/1 var(--disp);letter-spacing:.06em;text-transform:uppercase}.bar .ph small{font:500 12px var(--mono);color:var(--dim);letter-spacing:.14em;margin-left:12px}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:28px;align-items:start}
+.phase{margin-bottom:28px}.pband{display:flex;align-items:center;gap:14px;border-top:2px solid var(--brass);border-bottom:1px solid var(--line);padding:6px 0;margin-bottom:6px}
+.pband .num{font:900 54px/1 var(--disp);color:transparent;-webkit-text-stroke:1.5px var(--brass);letter-spacing:.02em}.pband .t{font:800 22px var(--disp);letter-spacing:.14em;text-transform:uppercase}
+.pband.night .num{-webkit-text-stroke-color:var(--silver)}.pband .al{margin-left:auto;font:500 12px var(--mono);color:var(--dim);letter-spacing:.1em}
+.ev{padding:9px 12px 9px 14px;border-left:3px solid var(--line);margin:2px 0;animation:rise .35s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}@media(prefers-reduced-motion:reduce){.ev{animation:none}}
+.ev.death{border-color:var(--blood);background:linear-gradient(90deg,rgba(184,55,45,.16),transparent 70%)}
+.ev.fight,.ev.hurt{border-color:var(--amber)}.ev.ally,.ev.heal{border-color:var(--moss)}.ev.gm{border-color:var(--brass);background:rgba(201,162,75,.07);font-style:italic}
+.ev.gift{border-color:var(--silver)}.ev.move{color:var(--dim)}
+.tag{font:500 11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--blood);margin-left:8px;white-space:nowrap}
+.nm{background:none;border:0;border-bottom:1px dotted var(--dim);padding:0 1px;font:600 1em var(--body);color:var(--bone)}.nm b{font:500 .62em var(--mono);color:var(--brass);vertical-align:.35em;margin-right:3px}
+.nm:hover{color:var(--brass)}.nm.dead{color:var(--blood);border-bottom-color:var(--blood)}
+.cannon{border:1px solid var(--blood);padding:14px 16px;margin:12px 0;background:rgba(184,55,45,.07)}
+.cannon h3{font:900 28px var(--disp);letter-spacing:.12em;text-transform:uppercase;color:var(--blood);margin:0 0 6px}
+.cannon ul{margin:0;padding:0;list-style:none;display:grid;gap:3px}.cannon li{font-size:16px}.cannon li i{color:var(--dim)}
+.quiet{border:1px solid var(--line);padding:10px 14px;margin:12px 0;color:var(--dim);font-style:italic}
+.panel{background:var(--panel);border:1px solid var(--line);padding:14px;margin-bottom:18px}
+#map svg{width:100%;height:auto;display:block}.zn{fill:var(--panel2);stroke:var(--line);stroke-width:1.5}.zn.closed{fill:#2a1411;stroke:var(--blood);stroke-dasharray:4 3}
+.zt{font:500 9px var(--mono);fill:var(--dim);text-anchor:middle;letter-spacing:.08em;text-transform:uppercase}.zc{font:800 20px var(--disp);fill:var(--bone);text-anchor:middle}.edge{stroke:var(--line);stroke-width:1.2}
+.roster{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.tc{background:var(--panel2);border:1px solid var(--line);padding:7px 9px;text-align:left;display:block;width:100%;position:relative}.tc:hover{border-color:var(--brass)}
+.tc .n{font:600 15px/1.15 var(--body);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tc .m{font:500 10px var(--mono);color:var(--dim);letter-spacing:.06em;display:flex;justify-content:space-between;margin-top:3px}
+.hp{display:block;height:4px;background:#000;margin-top:5px}.hp i{display:block;height:100%}
+.tc.dead{opacity:.5;filter:grayscale(.8)}.tc.dead .n{text-decoration:line-through;text-decoration-color:var(--blood)}
+.drawer{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:20;display:flex;justify-content:flex-end}.drawer[hidden]{display:none}
+.dr{width:min(430px,100%);background:var(--panel);border-left:2px solid var(--brass);padding:22px;overflow:auto}
+.dr h3{font:900 36px/1 var(--disp);text-transform:uppercase;letter-spacing:.05em;margin:0}.dr .sb{color:var(--dim);font-style:italic;margin:4px 0 14px}
+.st{display:grid;grid-template-columns:48px 1fr 24px;gap:8px;align-items:center;font:500 11px var(--mono);letter-spacing:.1em;margin:3px 0}.st .b{height:6px;background:#000}.st .b i{display:block;height:100%;background:var(--brass)}
+.dr h4{font:500 11px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin:16px 0 4px}.dr p{margin:2px 0;font-size:16px}
+.victor{border:2px solid var(--brass);padding:26px;margin:24px 0;text-align:center;background:radial-gradient(500px 200px at 50% 0,rgba(201,162,75,.18),transparent)}
+.victor .k{font:500 12px var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--brass)}.victor h2{font:900 clamp(40px,8vw,84px)/.95 var(--disp);color:var(--bone);letter-spacing:.04em;margin:8px 0}
+.stats{display:flex;gap:26px;justify-content:center;flex-wrap:wrap;margin:14px 0}.stats div b{display:block;font:800 34px var(--disp);color:var(--brass)}.stats div span{font:500 11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.digest{border-left:3px solid var(--amber);padding:12px 16px;margin:12px 0;background:rgba(200,150,40,.06)}.digest .hl{font:900 24px var(--disp);letter-spacing:.06em;text-transform:uppercase;color:var(--amber)}.digest p{margin:6px 0 0;font-size:17px;line-height:1.5}
+details.full{margin:10px 0}details.full>summary{cursor:pointer;font:500 12px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--dim);padding:6px 0}details.full[open]>summary{color:var(--bone)}
+.brief{border:1px solid var(--amber);margin:16px 0;padding:12px 16px;text-align:left;background:rgba(200,150,40,.05)}.brief h3{font:900 22px var(--disp);letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin:0 0 6px}.brief p{margin:0 0 5px;font-size:16px}.brief p .lb{font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--dim);display:inline-block;min-width:150px}
+.train{border:1px solid var(--line);margin:12px 0;background:var(--panel)}.train h3,.sboard h3{font:900 24px var(--disp);letter-spacing:.12em;text-transform:uppercase;margin:0;padding:12px 16px 4px}
+.train .sub{padding:0 16px 8px;color:var(--dim);font-size:14px}.trow{display:grid;grid-template-columns:34px 1fr 52px 64px 96px;gap:8px;align-items:center;padding:7px 16px;border-top:1px solid var(--line);font-size:15px}
+.trow.h{font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}.trow .rk{font:500 13px var(--mono);color:var(--dim)}.trow .sc{font:900 26px var(--disp);text-align:center;line-height:1}.trow .sc.hi{color:var(--amber)}.trow .sc.lo{color:var(--dim)}
+.trow .nt{grid-column:2/-1;color:var(--dim);font-size:13px;font-style:italic;margin-top:-4px}.trow .tr{font:500 12px var(--mono);color:var(--amber)}.trow .od{font:500 13px var(--mono)}
+.sboard{border:1px solid var(--amber);margin:12px 0;background:rgba(200,150,40,.06);padding-bottom:10px}.sboard h3{color:var(--amber);font-size:20px}.sboard .g{padding:2px 16px;font-size:15px}.sboard .g i{color:var(--dim)}
+.sboard .bar2{display:grid;grid-template-columns:110px 1fr 60px;gap:8px;align-items:center;padding:2px 16px;font-size:14px}.sboard .bar2 .b{height:6px;background:var(--line);display:block}.sboard .bar2 .b i{display:block;height:100%;background:var(--amber)}.sboard .bar2 span:last-child{font-family:var(--mono);text-align:right}
+@media(max-width:560px){.trow{grid-template-columns:28px 1fr 44px 56px}.trow .tr{display:none}}
+.ledger{text-align:left;margin-top:18px;font-size:15px;columns:2;column-gap:28px}.ledger p{margin:0 0 4px;break-inside:avoid}
+@media(min-width:981px){.cols aside{position:sticky;top:96px;max-height:calc(100vh - 110px);overflow:auto}}
+@media(max-width:980px){.setup,.cols{grid-template-columns:1fr}.ledger{columns:1}textarea{min-height:300px}}
+@media(max-width:520px){body{font-size:17px}.roster{grid-template-columns:1fr 1fr}.pband .num{font-size:40px}.wrap{padding:14px 14px 70px}}
+
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:22px;flex-wrap:wrap}
+.tab{background:none;border:0;border-bottom:3px solid transparent;padding:10px 18px;font:800 20px var(--disp);letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.tab[aria-selected=true]{color:var(--brass);border-bottom-color:var(--brass)}.tab:hover{color:var(--bone)}
+.pane[hidden]{display:none}.two{display:grid;grid-template-columns:1.25fr 1fr;gap:28px}
+.startrow{margin-top:26px;padding-top:18px;border-top:1px solid var(--line);display:flex;gap:18px;align-items:center;flex-wrap:wrap}.startrow .sum{color:var(--dim);font-style:italic;font-size:16px}
+.warns{margin:8px 0 0;padding:0;list-style:none;font:500 12px/1.5 var(--mono);color:var(--amber)}
+.zgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.zed{background:var(--panel);border:1px solid var(--line);padding:12px;display:grid;gap:7px}
+.zed input[type=text],.zed textarea{background:var(--ink);border:1px solid var(--line);color:var(--bone);font:400 14px var(--body);padding:6px 8px;width:100%}.zed textarea{min-height:56px;resize:vertical;font-size:13px}
+.zed .rg{display:grid;grid-template-columns:52px 1fr 20px;gap:6px;align-items:center;font:500 10px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}.zed .rg input{accent-color:var(--brass);width:100%}
+.zed .nm2{font:800 20px var(--disp);letter-spacing:.06em;text-transform:uppercase}.zed .row2{display:flex;gap:12px;align-items:center;font:500 11px var(--mono);color:var(--dim)}.zed .row2 input[type=number]{width:60px;padding:4px 6px}
+.doc{width:100%;border-collapse:collapse;font-size:14px;margin:8px 0 14px}.doc td,.doc th{border-bottom:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}.doc th{font:500 10px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}.doc td:first-child{font:500 12px var(--mono);color:var(--brass);white-space:nowrap}
+.twist{display:grid;grid-template-columns:22px 1fr;gap:4px 10px;align-items:start;padding:8px 0;border-bottom:1px solid var(--line)}.twist input{accent-color:var(--brass);width:18px;height:18px;margin-top:4px}.twist b{font:800 18px var(--disp);letter-spacing:.08em;text-transform:uppercase}.twist span{color:var(--dim);font-size:15px;grid-column:2}
+.dim{opacity:.4;pointer-events:none}textarea.sm{min-height:120px;font-size:13px}
+.quell{border:2px solid var(--brass);padding:18px 20px;margin:10px 0 22px;text-align:center;background:radial-gradient(500px 160px at 50% 0,rgba(201,162,75,.16),transparent)}
+.quell h3{font:900 clamp(28px,5vw,44px)/1 var(--disp);letter-spacing:.1em;text-transform:uppercase;margin:4px 0 10px;color:var(--brass)}.quell p{margin:6px 0;font-style:italic}.quell p b{font:600 11px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--dim);display:block;font-style:normal}
+@media(max-width:980px){.two,.zgrid{grid-template-columns:1fr}}
+.presets{margin-top:6px}.presets .btns{align-items:center}.seeds{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px}.chipbtn{background:transparent;border:1px solid var(--line);color:var(--bone);padding:5px 10px;font:500 12px var(--mono);cursor:pointer}.chipbtn:hover{border-color:var(--brass);color:var(--brass)}#p-msg{margin:8px 0 0;min-height:1em}.bad{color:#e07a6b}.fld{width:100%;background:var(--panel);border:1px solid var(--line);color:var(--bone);padding:8px 10px;font:400 14px var(--mono)}.cp{display:flex;justify-content:space-between;gap:12px;align-items:center;border-top:1px solid var(--line);padding:10px 0}
+</style></head>
+<body><div class="wrap">
+<header class="top"><h1>Arena <span>Ledger</span></h1><span class="sub">A Hunger Games simulator</span></header>
+<section id="setup" aria-label="Setup">
+<div class="panel presets" id="presets"><div class="btns"><label class="lbl" for="p-sel">Presets</label><select id="p-sel" style="width:auto;min-width:220px"></select><button class="btn" id="p-comm" type="button">Community presets</button><button class="btn" id="p-share" type="button">Share this setup</button><button class="btn" id="p-pub" type="button">Publish as preset</button></div><div class="seeds" id="p-seeds"></div><div id="p-msg" class="note" role="status"></div></div>
+<div class="tabs" role="tablist"><button class="tab" role="tab" id="t-trib" aria-selected="true" data-p="trib" type="button">Tributes</button><button class="tab" role="tab" id="t-arena" aria-selected="false" data-p="arena" type="button">Arena</button><button class="tab" role="tab" id="t-rules" aria-selected="false" data-p="rules" type="button">Rules &amp; Quell</button></div>
+<div class="pane" id="pane-trib"><div class="two">
+ <div><h2>The Reaping</h2><p class="note" style="margin-top:0">One tribute per line, or paste a spreadsheet (CSV or tab-separated, first row = headers). Anything you leave blank is rolled for you.</p>
+  <label class="lbl" for="roster-in">Tributes</label><textarea id="roster-in" spellcheck="false"></textarea>
+  <div class="btns" style="margin-top:10px"><span class="lbl" id="count" style="margin-right:auto"></span><button class="btn" id="b-shuf" type="button">Shuffle order</button><button class="btn" id="b-sample" type="button">Sample roster</button></div><ul class="warns" id="warns"></ul></div>
+ <div><h2>Spreadsheet template</h2><p class="note" style="margin-top:0">Fill this in Sheets or Excel, copy the cells, paste them into the box. Only Name is required.</p>
+  <div class="btns"><button class="btn pri" id="b-tpl" type="button" style="font-size:15px;padding:9px 18px">Load CSV template into box</button><button class="btn" id="b-tplc" type="button">Copy template</button></div>
+  <table class="doc"><tr><th>Column</th><th>What it does</th></tr>
+  <tr><td>Name</td><td>Required.</td></tr><tr><td>Pronouns</td><td>she, he or they.</td></tr><tr><td>Trait</td><td>brave, cunning, kind, ruthless, paranoid, steady, reckless, showy.</td></tr><tr><td>Background</td><td>Shows up in flavor lines: "a baker's apprentice".</td></tr>
+  <tr><td>District</td><td>Number. Blank = two per district in order.</td></tr><tr><td>STR SPD SMT STL SOC</td><td>1 to 10 each. Blank = rolled.</td></tr><tr><td>Items</td><td>Start with gear: knife, bow, medkit, rations, waterskin and more. Comma separated.</td></tr>
+  <tr><td>Alliance</td><td>Any label. Tributes sharing a label start allied (Careers, Pack, Crew).</td></tr><tr><td>Victor</td><td>yes for a past champion (used by the Veterans twist).</td></tr><tr><td>Bio</td><td>Notes, shown in the tribute card.</td></tr><tr><td>Score</td><td>Training score 1 to 12. Blank = the Gamemakers score them from their stats.</td></tr><tr><td>Sponsors</td><td>Starting sponsor money in marks. Blank = based on score and charm (usually 200 to 600).</td></tr><tr><td>Patron</td><td>Name of their Capitol sponsor. Blank = assigned.</td></tr></table>
+  <p class="note">Prefer typing? Pipes work too: <span style="font-family:var(--mono);font-size:12px">Maren Holloway | she | brave | a baker | str=8 items=bow,knife alliance=Careers</span></p></div>
+</div></div>
+<div class="pane" id="pane-arena" hidden><div class="two">
+ <div><h2>The Arena</h2><div class="btns" style="margin-bottom:14px"><label class="lbl" for="a-pre">Preset</label><select id="a-pre" style="width:auto"></select><label class="lbl" for="a-name">Name</label><input id="a-name" type="text" style="width:200px;background:var(--panel);border:1px solid var(--line);color:var(--bone);padding:8px 10px;font:400 14px var(--mono)"></div>
+  <div class="zgrid" id="zones"></div></div>
+ <div><div class="panel"><div class="lbl" style="margin-bottom:6px">Preview</div><div id="amap"></div></div>
+  <h2>Gamemaker hazards</h2><p class="note" style="margin-top:0">One per line, parts split by bars: <span style="font-family:var(--mono);font-size:12px">zones | severity 3-10 | injury | announcement // alternate | escape line | death line | fog</span>. Zones: center, north, northwest, northeast, east, south, southwest, or all. Use {zone}, {n} (name), {p} his/her, {o} him/her, {s} he/she, {r} himself/herself. Add "fog" for a hallucination hazard.</p>
+  <textarea id="a-haz" class="sm" spellcheck="false" style="min-height:230px"></textarea><ul class="warns" id="a-warn"></ul>
+  <h2 style="margin-top:18px">Share this arena</h2><div class="btns"><button class="btn" id="a-copy" type="button">Copy arena as JSON</button><button class="btn" id="a-load" type="button">Load JSON below</button></div><textarea id="a-json" class="sm" spellcheck="false" placeholder="Paste an arena JSON here, then press Load." style="margin-top:8px"></textarea></div>
+</div></div>
+<div class="pane" id="pane-rules" hidden><div class="two">
+ <div><h2>The Rules</h2>
+  <div class="field"><div class="row"><label class="lbl" for="s-car">Lethality</label><span class="lbl" id="v-car"></span></div><input id="s-car" type="range" min="0.6" max="1.6" step="0.1" value="1"></div>
+  <div class="field"><div class="row"><label class="lbl" for="s-haz">Gamemaker interference</label><span class="lbl" id="v-haz"></span></div><input id="s-haz" type="range" min="0" max="2" step="0.25" value="1"></div>
+  <div class="field"><div class="row"><label class="lbl" for="s-spons">Sponsors</label><span class="lbl" id="v-spons"></span></div><input id="s-spons" type="range" min="0" max="2" step="0.5" value="1"></div>
+  <label class="chk"><input type="checkbox" id="s-close" checked>The arena shrinks from day 3</label>
+  <label class="chk"><input type="checkbox" id="s-ally" checked>Alliances can form (and break)</label>
+  <label class="chk"><input type="checkbox" id="s-dist">Last district standing wins (partners can win together)</label>
+  <div class="field"><label class="lbl" for="s-seed">Seed (same seed, roster, arena and rules replay the same Games)</label><div class="btns"><input id="s-seed" type="number" style="flex:1"><button class="btn" id="b-seed" type="button">Roll</button></div></div></div>
+ <div><h2>Quarter Quell</h2><label class="chk"><input type="checkbox" id="q-on">Make this a Quarter Quell</label>
+  <div id="q-box" class="dim"><div class="field"><label class="lbl" for="q-ed">Edition</label><input id="q-ed" type="text" value="The Quarter Quell" style="background:var(--panel);border:1px solid var(--line);color:var(--bone);padding:8px 10px;font:400 14px var(--mono);width:100%"></div>
+  <div class="btns" style="margin-bottom:6px"><button class="btn" id="q-roll" type="button">Draw a random twist</button><button class="btn" id="q-clear" type="button">Clear twists</button></div><div id="q-list"></div></div></div>
+</div></div>
+<div class="startrow"><button class="btn pri" id="b-start" type="button">Begin the Games</button><span class="sum" id="sum"></span><span class="err" id="err" role="alert"></span></div>
+</section>
+<section id="arena" hidden aria-label="The Games">
+ <div class="bar"><div class="ph"><span id="ph-t">Ready</span><small id="ph-s"></small></div>
+  <div class="btns"><button class="btn pri" id="b-next" type="button">Next phase</button><button class="btn" id="b-auto" type="button" aria-pressed="false">Auto-play</button><button class="btn" id="b-skip" type="button">Skip animation</button>
+  <label class="lbl" for="s-view" style="display:flex;gap:6px;align-items:center">View <select id="s-view" style="width:auto"><option value="full">Play-by-play</option><option value="both">Play-by-play + summary</option><option value="sum">Summary only</option></select></label>
+  <label class="lbl" for="s-spd" style="display:flex;gap:6px;align-items:center">Pace <select id="s-spd" style="width:auto"><option value="900">Slow</option><option value="450" selected>Normal</option><option value="140">Fast</option><option value="0">Instant</option></select></label>
+  <button class="btn" id="b-copy" type="button">Copy recap</button><button class="btn" id="b-copys" type="button">Copy summary</button><button class="btn" id="b-new" type="button">New game</button></div></div>
+ <div class="cols"><main id="feed" aria-live="polite"></main>
+  <aside><div class="panel"><div class="lbl" style="margin-bottom:6px">The arena</div><div id="map"></div></div><div class="panel"><div class="lbl" style="margin-bottom:8px" id="r-h">Tributes</div><div class="roster" id="roster"></div></div></aside></div>
+</section>
+</div>
+<div class="drawer" id="drawer" hidden><div class="dr" id="dr"></div></div>
+<script src="engine.js?v=1"></script><script src="presets.js?v=1"></script><script src="app.js?v=1"></script></body></html>
