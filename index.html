@@ -94,6 +94,10 @@ details.full{margin:10px 0}details.full>summary{cursor:pointer;font:500 15px var
 
 *,*::before,*::after{font-style:normal!important}
 @media(max-height:780px),(max-width:760px){.bar{position:static}}
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;background:var(--ink);border-top:2px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom))}
+.dock .btn{min-width:130px;min-height:48px}
+#arena{padding-bottom:96px}
+#arena[hidden]+.dock,.dock[hidden]{display:none}
 /* ---- screens, themes, accessibility ---- */
 html{font-size:100%}.wrap.big{zoom:1.22}
 .top{flex-wrap:wrap;justify-content:space-between}.top .l{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
@@ -171,13 +175,13 @@ html{font-size:100%}.wrap.big{zoom:1.22}
 </section>
 <section id="arena" class="screen" hidden aria-label="The Games">
  <div class="bar"><div class="ph"><span id="ph-t">Ready</span><small id="ph-s"></small></div>
-  <div class="btns"><button class="btn pri" id="b-next" type="button">Next phase</button><button class="btn" id="b-auto" type="button" aria-pressed="false">Auto-play</button><button class="btn" id="b-skip" type="button">Skip animation</button>
-  <label class="lbl" for="s-view" style="display:flex;gap:6px;align-items:center">View <select id="s-view" style="width:auto"><option value="full">Play-by-play</option><option value="both">Play-by-play + summary</option><option value="sum">Summary only</option></select></label>
+  <div class="btns">  <label class="lbl" for="s-view" style="display:flex;gap:6px;align-items:center">View <select id="s-view" style="width:auto"><option value="full">Play-by-play</option><option value="both">Play-by-play + summary</option><option value="sum">Summary only</option></select></label>
   <label class="lbl" for="s-spd" style="display:flex;gap:6px;align-items:center">Pace <select id="s-spd" style="width:auto"><option value="900">Slow</option><option value="450" selected>Normal</option><option value="140">Fast</option><option value="0">Instant</option></select></label>
   <button class="btn" id="b-copy" type="button">Copy recap</button><button class="btn" id="b-copys" type="button">Copy summary</button><button class="btn" id="b-new" type="button">Back</button></div></div>
+ <div class="dock" role="group" aria-label="Game controls"><button class="btn pri" id="b-next" type="button">Next phase</button><button class="btn" id="b-auto" type="button" aria-pressed="false">Auto-play</button><button class="btn" id="b-skip" type="button">Skip animation</button></div>
  <div class="cols"><main id="feed" aria-live="polite"></main>
   <aside><div class="panel"><div class="lbl" style="margin-bottom:6px">The arena</div><div id="map"></div></div><div class="panel"><div class="lbl" style="margin-bottom:8px" id="r-h">Tributes</div><div class="roster" id="roster"></div></div></aside></div>
 </section>
 </div>
 <div class="drawer" id="drawer" hidden><div class="dr" id="dr"></div></div>
-<script src="engine.js?v=4"></script><script src="presets.js?v=4"></script><script src="app.js?v=4"></script></body></html>
+<script src="engine.js?v=5"></script><script src="presets.js?v=5"></script><script src="app.js?v=5"></script></body></html>
