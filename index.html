@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Arena Ledger</title>
+<title>The Competition</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Atkinson+Hyperlegible+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Atkinson+Hyperlegible+Mono:wght@400;700&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 /* layout: ledger feed on the left, living map + roster on the right; one committed dark world */
 :root{--ink:#000;--panel:#0e0e0e;--panel2:#181818;--line:#767676;--bone:#fff;--dim:#dedede;--brass:#ffd23f;--blood:#ffa3a3;--moss:#8dffa5;--amber:#ffb454;--silver:#a8dcff;--on:#000;--disp:"Atkinson Hyperlegible",Verdana,sans-serif;--body:"Atkinson Hyperlegible",Verdana,sans-serif;--mono:"Atkinson Hyperlegible Mono","Atkinson Hyperlegible",ui-monospace,monospace;color-scheme:dark}
@@ -123,52 +123,111 @@ html{font-size:100%}.wrap.big{zoom:1.22}
 .cp b{color:var(--brass)}
 .bad{color:var(--blood)}
 .ev{font-size:20px}.tag{color:var(--blood)}
+
+/* ================= CYBER LAYER: cleaner, modern, relaxed contrast (AA+) ================= */
+:root{--ink:#080b13;--panel:#0e1421;--panel2:#141d30;--line:#5b6e94;--hair:#1f2a40;--bone:#e6ecf8;--dim:#9fb0cb;--brass:#25dcff;--blood:#ff7b9e;--moss:#5eeea8;--amber:#ffc45c;--silver:#a99dff;--mag:#ff3fd8;--on:#04141c;--r:12px;--disp:"Chakra Petch","Atkinson Hyperlegible",Verdana,sans-serif}
+html,body{background:var(--ink)}
+body{background:radial-gradient(900px 420px at 8% -8%,color-mix(in srgb,var(--brass) 13%,transparent),transparent 65%),radial-gradient(800px 380px at 96% -4%,color-mix(in srgb,var(--mag) 11%,transparent),transparent 65%),linear-gradient(var(--ink),var(--ink));background-attachment:fixed;font-size:19px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.top{border-bottom:1px solid var(--hair);padding-bottom:14px}
+.top h1{font:700 clamp(30px,5.4vw,50px)/1 var(--disp);letter-spacing:.14em;text-transform:uppercase;color:var(--bone)}
+.top h1 span{background:linear-gradient(90deg,var(--brass),var(--mag));-webkit-background-clip:text;background-clip:text;color:transparent}
+.top .sub{letter-spacing:.12em;color:var(--dim);font-size:14px}
+h2{font:600 21px/1.1 var(--disp);letter-spacing:.14em;color:var(--brass)}
+.lbl{letter-spacing:.1em;font-size:13px}
+.hero{font:600 clamp(28px,4.6vw,42px)/1.12 var(--disp);letter-spacing:.02em}
+.btn{border:1px solid var(--line);border-radius:10px;background:color-mix(in srgb,var(--panel2) 70%,transparent);font:600 15px var(--disp);letter-spacing:.1em;min-height:44px}
+.btn:hover{border-color:var(--brass);color:var(--brass);box-shadow:0 0 0 1px var(--brass),0 0 18px -4px var(--brass)}
+.btn.pri{background:linear-gradient(90deg,var(--brass),color-mix(in srgb,var(--brass) 55%,var(--mag)));color:var(--on);border-color:transparent;box-shadow:0 0 22px -6px var(--brass)}
+.btn.pri:hover{color:var(--on);box-shadow:0 0 28px -4px var(--brass);filter:brightness(1.08)}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--brass);outline-offset:2px;box-shadow:none}
+textarea,input[type=number],input[type=search],input[type=text],select{background:var(--panel);border:1px solid var(--line);border-radius:10px;color:var(--bone)}
+input[type=search],#g-q{font:400 16px var(--body);padding:10px 14px;min-width:230px}
+select{font:500 15px var(--body);padding:9px 12px}
+.panel,.train,.zed,.brief,.sboard,.digest,.quiet,.cannon,.victor,.quell,.dr{border-radius:var(--r)}
+.panel{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--hair)}
+.bar{background:color-mix(in srgb,var(--ink) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--hair)}
+.bar .ph{font:700 28px/1 var(--disp);letter-spacing:.1em}
+.pband{border-top:1px solid var(--brass);border-bottom:1px solid var(--hair)}.pband .num{font:700 46px/1 var(--disp);color:var(--brass)}.pband .t{font:600 20px var(--disp);letter-spacing:.12em}
+.ev{border-left:2px solid var(--line);border-radius:0 8px 8px 0;font-size:19px}
+.ev.death{background:linear-gradient(90deg,color-mix(in srgb,var(--blood) 14%,transparent),transparent 75%)}
+.ev.gm{background:color-mix(in srgb,var(--mag) 8%,transparent);border-color:var(--mag)}
+.tag{letter-spacing:.1em}
+.cannon{background:color-mix(in srgb,var(--blood) 8%,var(--panel));border-color:color-mix(in srgb,var(--blood) 55%,transparent)}.cannon h3{font:700 24px var(--disp);letter-spacing:.1em}
+.digest{border-left:2px solid var(--amber);background:color-mix(in srgb,var(--amber) 6%,var(--panel))}.digest .hl{font:600 21px var(--disp);letter-spacing:.1em}
+.sboard,.brief{border:1px solid color-mix(in srgb,var(--amber) 45%,transparent);background:color-mix(in srgb,var(--amber) 5%,var(--panel))}
+.victor{border:1px solid var(--brass);background:radial-gradient(520px 200px at 50% 0,color-mix(in srgb,var(--brass) 16%,transparent),transparent),var(--panel);box-shadow:0 0 40px -18px var(--brass)}
+.victor h2{font:700 clamp(34px,7vw,70px)/1 var(--disp);letter-spacing:.06em}
+.quell{border:1px solid var(--mag);background:radial-gradient(520px 170px at 50% 0,color-mix(in srgb,var(--mag) 16%,transparent),transparent),var(--panel);box-shadow:0 0 36px -18px var(--mag)}.quell h3{font:700 clamp(26px,5vw,40px)/1.05 var(--disp);color:var(--mag);letter-spacing:.1em}
+.tc{background:var(--panel2);border:1px solid var(--hair);border-radius:10px}.tc:hover{border-color:var(--brass)}
+.hp{background:#05070c;border-radius:3px;overflow:hidden}
+.zn{fill:var(--panel2);stroke:var(--line)}.zn.closed{fill:#1d0f18;stroke:var(--blood)}
+.dr{border-left:1px solid var(--brass);background:var(--panel);border-radius:var(--r) 0 0 var(--r)}.dr h3{font:700 30px/1.05 var(--disp);letter-spacing:.06em}
+.stats div b{font:700 32px var(--disp)}
+.bigcard{border:1px solid color-mix(in srgb,var(--brass) 60%,transparent);border-radius:16px;background:linear-gradient(160deg,color-mix(in srgb,var(--brass) 9%,var(--panel)),var(--panel));box-shadow:0 0 30px -20px var(--brass)}
+.bigcard:hover{border-color:var(--brass);box-shadow:0 0 34px -12px var(--brass);background:linear-gradient(160deg,color-mix(in srgb,var(--brass) 14%,var(--panel)),var(--panel))}
+.bigcard b{font:700 30px/1.1 var(--disp);letter-spacing:.04em}
+.bigcard.alt{border-color:color-mix(in srgb,var(--mag) 60%,transparent);background:linear-gradient(160deg,color-mix(in srgb,var(--mag) 9%,var(--panel)),var(--panel))}.bigcard.alt b{color:var(--mag)}.bigcard.alt:hover{border-color:var(--mag);box-shadow:0 0 34px -12px var(--mag)}
+.gtools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:0 0 6px;position:sticky;top:0;z-index:4;background:color-mix(in srgb,var(--ink) 90%,transparent);backdrop-filter:blur(8px);padding:10px 0}
+.gh{font:600 20px var(--disp);letter-spacing:.14em;text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--hair)}
+.gal{gap:14px}
+.pcard{background:linear-gradient(165deg,color-mix(in srgb,var(--ca) 11%,var(--panel)),var(--panel));border:1px solid color-mix(in srgb,var(--ca) 40%,transparent);border-top:3px solid var(--ca);border-radius:14px;min-height:160px;color:var(--bone)}
+.pcard:hover{filter:none;border-color:var(--ca);box-shadow:0 0 26px -10px var(--ca);transform:translateY(-1px)}
+.pcard b{font:600 21px/1.2 var(--disp);letter-spacing:.03em}.pcard span{font-size:16.5px;color:var(--bone);opacity:.92}.pcard .pm{font:500 14px var(--mono);color:var(--cb)}
+.seedbtn{border:1px solid var(--line);border-radius:12px}.seedbtn:hover{border-color:var(--brass)}
+.tab{font:600 17px var(--disp);letter-spacing:.1em}
+.rhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}.rhead select{padding:5px 8px;font-size:14px;max-width:150px}
+.dock{background:color-mix(in srgb,var(--ink) 90%,transparent);backdrop-filter:blur(10px);border-top:1px solid var(--line)}
+.nm{border-bottom:1px dotted var(--dim)}
+.twist b{font:600 17px var(--disp);letter-spacing:.1em}
+.hp i,.st .b i{border-radius:3px}
+::selection{background:var(--mag);color:#fff}
 </style></head>
 <body><div class="wrap">
-<header class="top"><div class="l"><h1>Arena <span>Ledger</span></h1><span class="sub">A Hunger Games simulator</span></div>
+<header class="top"><div class="l"><h1>The <span>Competition</span></h1><span class="sub">A survival-game simulator</span></div>
 <div class="prefs" role="group" aria-label="Display settings"><button class="btn" id="f-minus" type="button" aria-label="Smaller text">A&minus;</button><button class="btn" id="f-plus" type="button" aria-label="Larger text" aria-pressed="false">A+</button><button class="btn" id="f-col" type="button" aria-pressed="false">Colors: themed</button></div></header>
 <section id="home" class="screen" aria-label="Start"><h2 class="hero">What do you want to play?</h2>
 <div class="choice"><button class="bigcard" id="c-pre" type="button"><span class="bc-k">Easiest</span><b>Play a preset</b><span>Pick a show, book or world. Everything is filled in. One click to run.</span></button>
-<button class="bigcard alt" id="c-cus" type="button"><span class="bc-k">Your own</span><b>Build a custom game</b><span>Type or paste your own tributes, design the arena, set the rules.</span></button></div>
+<button class="bigcard alt" id="c-cus" type="button"><span class="bc-k">Your own</span><b>Build a custom game</b><span>Type or paste your own contestants, design the arena, set the rules.</span></button></div>
 <div class="homelinks"><button class="btn" id="c-comm" type="button">Browse community presets</button><span class="note">Opened a share link? It loads by itself.</span></div><div class="rmsg" id="h-msg" role="status"></div></section>
-<section id="gallery" class="screen" hidden aria-label="Presets"><button class="btn back" data-go="home" type="button">&larr; Back</button><h2 class="hero">Pick a preset</h2><div id="gal"></div></section>
+<section id="gallery" class="screen" hidden aria-label="Presets"><button class="btn back" data-go="home" type="button">&larr; Back</button><h2 class="hero">Pick a preset</h2><div class="gtools"><label class="sr" for="g-q">Search presets</label><input id="g-q" type="search" placeholder="Search presets" autocomplete="off"><label class="sr" for="g-sort">Sort</label><select id="g-sort"><option value="cat">Group by category</option><option value="az">Name A to Z</option><option value="za">Name Z to A</option><option value="small">Cast size, small first</option><option value="large">Cast size, large first</option><option value="new">Newest first</option></select><label class="sr" for="g-cat">Category</label><select id="g-cat"></select><span class="note" id="g-count" role="status"></span></div><div id="gal"></div></section>
 <section id="ready" class="screen ready" hidden aria-label="Preset"><button class="btn back" data-go="gallery" type="button" id="rd-back">&larr; All presets</button><h2 class="hero" id="rd-name"></h2><p id="rd-blurb" style="font-size:21px;margin:0 0 6px"></p><p class="meta" id="rd-meta"></p>
 <h3>Run a game</h3><div class="seedgrid" id="rd-seeds"></div>
 <div class="btns" style="margin-top:18px"><button class="btn pri" id="rd-rand" type="button">Random game</button><button class="btn" id="rd-cus" type="button">Customize this setup</button><button class="btn" id="rd-share" type="button">Copy share link</button></div><div class="rmsg" id="rd-msg" role="status"></div></section>
 <section id="setup" class="screen" hidden aria-label="Setup">
 <button class="btn back" data-go="home" type="button">&larr; Start over</button><h2 class="hero" id="su-h">Build a custom game</h2><div class="btns" style="margin-bottom:18px"><button class="btn" id="p-share" type="button">Copy share link</button><button class="btn" id="p-pub" type="button">Publish as community preset</button></div><div id="p-msg" class="rmsg" role="status"></div>
-<div class="tabs" role="tablist"><button class="tab" role="tab" id="t-trib" aria-selected="true" data-p="trib" type="button">1. Tributes</button><button class="tab" role="tab" id="t-arena" aria-selected="false" data-p="arena" type="button">2. Arena</button><button class="tab" role="tab" id="t-rules" aria-selected="false" data-p="rules" type="button">3. Rules &amp; Quell</button></div>
+<div class="tabs" role="tablist"><button class="tab" role="tab" id="t-trib" aria-selected="true" data-p="trib" type="button">1. Contestants</button><button class="tab" role="tab" id="t-arena" aria-selected="false" data-p="arena" type="button">2. Arena</button><button class="tab" role="tab" id="t-rules" aria-selected="false" data-p="rules" type="button">3. Rules &amp; Quell</button></div>
 <div class="pane" id="pane-trib"><div class="two">
- <div><h2>The Reaping</h2><p class="note" style="margin-top:0">One tribute per line, or paste a spreadsheet (CSV or tab-separated, first row = headers). Anything you leave blank is rolled for you.</p>
-  <label class="lbl" for="roster-in">Tributes</label><textarea id="roster-in" spellcheck="false"></textarea>
+ <div><h2>The Intake</h2><p class="note" style="margin-top:0">One contestant per line, or paste a spreadsheet (CSV or tab-separated, first row = headers). Anything you leave blank is rolled for you.</p>
+  <label class="lbl" for="roster-in">Contestants</label><textarea id="roster-in" spellcheck="false"></textarea>
   <div class="btns" style="margin-top:10px"><span class="lbl" id="count" style="margin-right:auto"></span><button class="btn" id="b-shuf" type="button">Shuffle order</button><button class="btn" id="b-sample" type="button">Sample roster</button></div><ul class="warns" id="warns"></ul></div>
  <div><h2>Spreadsheet template</h2><p class="note" style="margin-top:0">Fill this in Sheets or Excel, copy the cells, paste them into the box. Only Name is required.</p>
   <div class="btns"><button class="btn pri" id="b-tpl" type="button" style="font-size:15px;padding:9px 18px">Load CSV template into box</button><button class="btn" id="b-tplc" type="button">Copy template</button></div>
   <table class="doc"><tr><th>Column</th><th>What it does</th></tr>
   <tr><td>Name</td><td>Required.</td></tr><tr><td>Pronouns</td><td>she, he or they.</td></tr><tr><td>Trait</td><td>brave, cunning, kind, ruthless, paranoid, steady, reckless, showy.</td></tr><tr><td>Background</td><td>Shows up in flavor lines: "a baker's apprentice".</td></tr>
-  <tr><td>District</td><td>Number. Blank = two per district in order.</td></tr><tr><td>STR SPD SMT STL SOC</td><td>1 to 10 each. Blank = rolled.</td></tr><tr><td>Items</td><td>Start with gear: knife, bow, medkit, rations, waterskin and more. Comma separated.</td></tr>
-  <tr><td>Alliance</td><td>Any label. Tributes sharing a label start allied (Careers, Pack, Crew).</td></tr><tr><td>Victor</td><td>yes for a past champion (used by the Veterans twist).</td></tr><tr><td>Bio</td><td>Notes, shown in the tribute card.</td></tr><tr><td>Score</td><td>Training score 1 to 12. Blank = the Gamemakers score them from their stats.</td></tr><tr><td>Sponsors</td><td>Starting sponsor money in marks. Blank = based on score and charm (usually 200 to 600).</td></tr><tr><td>Patron</td><td>Name of their Capitol sponsor. Blank = assigned.</td></tr></table>
-  <p class="note">Prefer typing? Pipes work too: <span style="font-family:var(--mono);font-size:15px">Maren Holloway | she | brave | a baker | str=8 items=bow,knife alliance=Careers</span></p></div>
+  <tr><td>Sector</td><td>Number. Blank = two per sector in order.</td></tr><tr><td>STR SPD SMT STL SOC</td><td>1 to 10 each. Blank = rolled.</td></tr><tr><td>Items</td><td>Start with gear: knife, bow, medkit, rations, waterskin and more. Comma separated.</td></tr>
+  <tr><td>Alliance</td><td>Any label. Contestants sharing a label start allied (Crew, Pack, Unit).</td></tr><tr><td>Champion</td><td>yes for a past champion (used by the Veterans twist).</td></tr><tr><td>Bio</td><td>Notes, shown in the contestant card.</td></tr><tr><td>Score</td><td>Training score 1 to 12. Blank = the Overseers score them from their stats.</td></tr><tr><td>Sponsors</td><td>Starting sponsor money in credits. Blank = based on score and charm (usually 200 to 600).</td></tr><tr><td>Patron</td><td>Name of their Syndicate sponsor. Blank = assigned.</td></tr></table>
+  <p class="note">Prefer typing? Pipes work too: <span style="font-family:var(--mono);font-size:15px">Maren Holloway | she | brave | a baker | str=8 items=bow,knife alliance=Crew</span></p></div>
 </div></div>
 <div class="pane" id="pane-arena" hidden><div class="two">
  <div><h2>The Arena</h2><div class="btns" style="margin-bottom:14px"><label class="lbl" for="a-pre">Preset</label><select id="a-pre" style="width:auto"></select><label class="lbl" for="a-name">Name</label><input id="a-name" type="text" style="width:200px;background:var(--panel);border:1px solid var(--line);color:var(--bone);padding:8px 10px;font:400 16px var(--mono)"></div>
   <div class="zgrid" id="zones"></div></div>
  <div><div class="panel"><div class="lbl" style="margin-bottom:6px">Preview</div><div id="amap"></div></div>
-  <h2>Gamemaker hazards</h2><p class="note" style="margin-top:0">One per line, parts split by bars: <span style="font-family:var(--mono);font-size:15px">zones | severity 3-10 | injury | announcement // alternate | escape line | death line | fog</span>. Zones: center, north, northwest, northeast, east, south, southwest, or all. Use {zone}, {n} (name), {p} his/her, {o} him/her, {s} he/she, {r} himself/herself. Add "fog" for a hallucination hazard.</p>
+  <h2>Overseer hazards</h2><p class="note" style="margin-top:0">One per line, parts split by bars: <span style="font-family:var(--mono);font-size:15px">zones | severity 3-10 | injury | announcement // alternate | escape line | death line | fog</span>. Zones: center, north, northwest, northeast, east, south, southwest, or all. Use {zone}, {n} (name), {p} his/her, {o} him/her, {s} he/she, {r} himself/herself. Add "fog" for a hallucination hazard.</p>
   <textarea id="a-haz" class="sm" spellcheck="false" style="min-height:230px"></textarea><ul class="warns" id="a-warn"></ul>
   <h2 style="margin-top:18px">Share this arena</h2><div class="btns"><button class="btn" id="a-copy" type="button">Copy arena as JSON</button><button class="btn" id="a-load" type="button">Load JSON below</button></div><textarea id="a-json" class="sm" spellcheck="false" placeholder="Paste an arena JSON here, then press Load." style="margin-top:8px"></textarea></div>
 </div></div>
 <div class="pane" id="pane-rules" hidden><div class="two">
  <div><h2>The Rules</h2>
   <div class="field"><div class="row"><label class="lbl" for="s-car">Lethality</label><span class="lbl" id="v-car"></span></div><input id="s-car" type="range" min="0.6" max="1.6" step="0.1" value="1"></div>
-  <div class="field"><div class="row"><label class="lbl" for="s-haz">Gamemaker interference</label><span class="lbl" id="v-haz"></span></div><input id="s-haz" type="range" min="0" max="2" step="0.25" value="1"></div>
+  <div class="field"><div class="row"><label class="lbl" for="s-haz">Overseer interference</label><span class="lbl" id="v-haz"></span></div><input id="s-haz" type="range" min="0" max="2" step="0.25" value="1"></div>
   <div class="field"><div class="row"><label class="lbl" for="s-spons">Sponsors</label><span class="lbl" id="v-spons"></span></div><input id="s-spons" type="range" min="0" max="2" step="0.5" value="1"></div>
   <label class="chk"><input type="checkbox" id="s-close" checked>The arena shrinks from day 3</label>
   <label class="chk"><input type="checkbox" id="s-ally" checked>Alliances can form (and break)</label>
-  <label class="chk"><input type="checkbox" id="s-dist">Last district standing wins (partners can win together)</label>
+  <label class="chk"><input type="checkbox" id="s-dist">Last sector standing wins (partners can win together)</label>
   <div class="field"><label class="lbl" for="s-seed">Seed (same seed, roster, arena and rules replay the same Games)</label><div class="btns"><input id="s-seed" type="number" style="flex:1"><button class="btn" id="b-seed" type="button">Roll</button></div></div></div>
- <div><h2>Quarter Quell</h2><label class="chk"><input type="checkbox" id="q-on">Make this a Quarter Quell</label>
-  <div id="q-box" class="dim"><div class="field"><label class="lbl" for="q-ed">Edition</label><input id="q-ed" type="text" value="The Quarter Quell" style="background:var(--panel);border:1px solid var(--line);color:var(--bone);padding:8px 10px;font:400 16px var(--mono);width:100%"></div>
+ <div><h2>Special Protocol</h2><label class="chk"><input type="checkbox" id="q-on">Make this a Special Protocol</label>
+  <div id="q-box" class="dim"><div class="field"><label class="lbl" for="q-ed">Edition</label><input id="q-ed" type="text" value="The Special Protocol" style="background:var(--panel);border:1px solid var(--line);color:var(--bone);padding:8px 10px;font:400 16px var(--mono);width:100%"></div>
   <div class="btns" style="margin-bottom:6px"><button class="btn" id="q-roll" type="button">Draw a random twist</button><button class="btn" id="q-clear" type="button">Clear twists</button></div><div id="q-list"></div></div></div>
 </div></div>
 <div class="startrow"><button class="btn pri" id="b-start" type="button">Begin the Games</button><span class="sum" id="sum"></span><span class="err" id="err" role="alert"></span></div>
@@ -180,8 +239,8 @@ html{font-size:100%}.wrap.big{zoom:1.22}
   <button class="btn" id="b-copy" type="button">Copy recap</button><button class="btn" id="b-copys" type="button">Copy summary</button><button class="btn" id="b-new" type="button">Back</button></div></div>
  <div class="dock" role="group" aria-label="Game controls"><button class="btn pri" id="b-next" type="button">Next phase</button><button class="btn" id="b-auto" type="button" aria-pressed="false">Auto-play</button><button class="btn" id="b-skip" type="button">Skip animation</button></div>
  <div class="cols"><main id="feed" aria-live="polite"></main>
-  <aside><div class="panel"><div class="lbl" style="margin-bottom:6px">The arena</div><div id="map"></div></div><div class="panel"><div class="lbl" style="margin-bottom:8px" id="r-h">Tributes</div><div class="roster" id="roster"></div></div></aside></div>
+  <aside><div class="panel"><div class="lbl" style="margin-bottom:6px">The arena</div><div id="map"></div></div><div class="panel"><div class="rhead"><div class="lbl" id="r-h">Contestants</div><label class="sr" for="r-sort">Sort contestants</label><select id="r-sort"><option value="id">Draft order</option><option value="alive">Alive first</option><option value="kills">Most kills</option><option value="hp">Lowest health</option><option value="name">Name A to Z</option><option value="sector">Sector</option></select></div><div class="roster" id="roster"></div></div></aside></div>
 </section>
 </div>
 <div class="drawer" id="drawer" hidden><div class="dr" id="dr"></div></div>
-<script src="engine.js?v=10"></script><script src="presets.js?v=10"></script><script src="app.js?v=10"></script></body></html>
+<script src="engine.js?v=11"></script><script src="presets.js?v=11"></script><script src="app.js?v=11"></script></body></html>
